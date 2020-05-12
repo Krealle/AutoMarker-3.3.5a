@@ -1,0 +1,6 @@
+## Interface: 30300
+## Title: AutoMark
+## Author: Vollmerino
+## Version: 0.1
+
+Core.lua
