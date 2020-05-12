@@ -23,19 +23,12 @@ local marksAllowed = {
 }
 
 local markGUID = {} -- Contains the GUID of the marked targets
-
 local marksText = {} -- Contains the Names of the marked targets
-
 local namesToMark = { -- Contains the names to check against
 	"Guardian of Yogg-Saron"
 }
 
-local checkInt; -- How many names to loop through
-
-local textInt = 1; -- Where to insert text into namesToMark array
-
 local ubase;
-
 local _debug;
 
 -- Frame and moveable Functionality
@@ -228,9 +221,9 @@ UIConfig:SetScript("OnDragStop", UIConfig.StopMovingOrSizing)
 			UIConfig.dynStatusText:SetText("ACTIVE")
 			if status == false then
 				if #namesToMark > 0 then
-					textInt = #namesToMark
+					local textInt = #namesToMark
 				else
-					textInt = 1
+					local textInt = 1
 				end
 			end
 			local str = UIConfig.editBox:GetText(); -- Add input box names Case sensitive and space sensitive
@@ -270,34 +263,18 @@ UIConfig:SetScript("OnDragStop", UIConfig.StopMovingOrSizing)
 		UIConfig.resetButton:SetNormalFontObject("GameFontNormalLarge");
 		UIConfig.resetButton:SetHighlightFontObject("GameFontHighlightLarge");
 		UIConfig.resetButton:SetScript("OnClick", function()
-			for j=1,8 do
-				marks[j] = false;
-				marksText[j] = "Inactive";
-				markGUID[j] = 0;
+			for i=1,8 do
+				marks[i] = false;
+				marksText[i] = "Inactive";
+				markGUID[i] = 0;
 			end
 			local ubase = IsInRaid() and "raid" or "party"
 			for i=1,GetNumGroupMembers() do -- Run loop for each raid/party member
-				local raid_mark_party = GetRaidTargetIndex(ubase..i.."target") -- get the index of a raidmembers target
-				if UnitExists(ubase..i.."target") then -- If target exists, else ignore
+				if UnitExists(ubase..i.."target") and (not UnitIsPlayer(ubase..i.."target")) then -- If target exists, else ignore
 					SetRaidTarget(ubase..i.."target", 0) -- Try to remove marks for raidmembers targets
 				end
 			end
 
-			for l=1,8 do
-				if(GetRaidTargetIndex("player") == nil) then
-					SetRaidTarget("player", l);
-					SetRaidTarget("player", 0);
-				else
-					for n=1, GetNumGroupMembers() do
-						if(GetRaidTargetIndex(ubase..n) == nil) then
-							SetRaidTarget(ubase..n, l);
-							SetRaidTarget(ubase..n, 0);
-							break;
-						end
-					end
-				end
-			end
-			
 			status = false
 			UIConfig.dynStatusText:SetText("INACTIVE")
 		end)
@@ -460,7 +437,6 @@ f2:SetScript("OnEvent", function(self, event, timestamp, subevent, SourceGUID, s
 				markGUID[i] = nil; -- Remove GUID incase the same GUID could show up later and disrubt
 			end
 		end
-	--elseif subevent == "SPELL_CAST_SUCCESS" and sourceName == "Vollmerino" then
 	end	
 end)
 ---------------------------#DEBUGGING FUNCTIONS#-----------------------------
